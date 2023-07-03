@@ -1,0 +1,65 @@
+name: OWASP Scan
+
+description: |
+  An action to run an OWASP scan on a report
+
+inputs:
+  download-artifacts:
+    description: Whether artifacts (Maven state, compiled classes and JARs) should be downloaded
+    default: 'true'
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up ${{ inputs.graalvm-distribution }} ${{ inputs.graalvm-version }} (Java ${{ inputs.java-version }})
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Download Maven State
+      uses: actions/download-artifact@v3
+      if: ${{ inputs.download-artifacts == 'true' }}
+      with:
+        name: maven-state
+
+    - name: Download Compiled Classes
+      uses: actions/download-artifact@v3
+      if: ${{ inputs.download-artifacts == 'true' }}
+      with:
+        name: compiled-classes
+
+    - name: Download JARs
+      uses: actions/download-artifact@v3
+      if: ${{ inputs.download-artifacts == 'true' }}
+      with:
+        name: jars
+
+    - name: OWASP CVE Scan
+      shell: sh
+      run: |
+        ./mvnw \
+          --batch-mode \
+          --color always \
+          --define ci-owasp \
+          package
+
+    - name: Upload OWASP Scan Report
+      uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        if-no-files-found: error
+        name: owasp-report
+        path: '**/target/owasp/*.xml'
+        retention-days: 2
+
+    - name: Publish Report
+      if: ${{ always() }}
+      uses: turing85/publish-report@v1.0.3
+      with:
+        report-list-tests: failed
+        report-name: OWASP Scan
+        report-path: '**/target/owasp/*.xml'

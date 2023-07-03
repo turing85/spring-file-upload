@@ -1,0 +1,111 @@
+name: Integration Test
+
+description: |
+  An action to execute the integration tests.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Download Maven State
+      uses: actions/download-artifact@v3
+      with:
+        name: maven-state
+
+    - name: Download Compiled Classes
+      uses: actions/download-artifact@v3
+      with:
+        name: compiled-classes
+
+    - name: Download JARs
+      uses: actions/download-artifact@v3
+      with:
+        name: jars
+
+    - name: Run Integration Tests
+      shell: bash
+      run: |
+        function wait_for() {
+          [ -n "${1}" ] || return 1
+          local url="${1}"
+          local service_name="${2:-${url}}"
+          local expected_code="${3:-200}"
+          local counter=0
+          printf "Waiting for %s to become ready" "${service_name}"
+          while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${url}")" != "${expected_code}" ]]
+          do
+            (( counter = counter + 1 ))
+            printf "."
+            if [[ "${counter}" -ge 12 ]]
+            then
+              printf "Waited for 1 minute, %s did not become ready. Exiting.\n" "${service_name}"
+              return 1
+            fi
+            sleep 5
+          done
+          printf "OK\n"
+        }
+
+        function start_application() {
+          echo "Starting Application"
+          mkdir -p logs
+          java -jar target/spring-file-upload-0.0.1-SNAPSHOT.jar 1>logs/log.txt 2>logs/error.txt &
+          return "${!}"
+        }
+
+        function run_integration_tests() {
+          start_application
+          local jar_pid=${?}
+          local return_code=0
+          wait_for "localhost:8080/actuator/health/readiness" "Application" || return_code="${?}"
+
+          if [[ "${return_code}" -eq 0 ]]
+          then
+            ./mvnw \
+              --batch-mode \
+              --color always \
+              --define ci \
+              failsafe:integration-test failsafe:verify \
+              || return_code="${?}"
+
+            echo "Stopping Application"
+            kill "${jar_pid}"
+          fi
+          return "${return_code}"
+        }
+
+        return_code=0
+        run_integration_tests || return_code="${?}"
+        exit "${return_code}"
+
+    - name: Upload Integration Test Report
+      uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        name: int-test-report
+        path: '**/target/cucumber-reports/cucumber.xml'
+        if-no-files-found: error
+        retention-days: 2
+
+    - name: Upload Integration Test App Logs
+      uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        name: int-test-app-logs
+        path: 'logs/*'
+        if-no-files-found: error
+        retention-days: 2
+
+    - name: Publish Report
+      if: ${{ always() }}
+      uses: turing85/publish-report@v1.0.3
+      with:
+        report-name: Integration Test
+        report-path: '**/target/cucumber-reports/cucumber.xml'

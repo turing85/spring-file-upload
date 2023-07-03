@@ -1,0 +1,137 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - '**.gitignore'
+      - 'CODEOWNERS'
+      - 'LICENSE.txt'
+      - '**.md'
+      - '**.adoc'
+      - '**.txt'
+      - '.all-contributorsrc'
+      - 'localdeployment/docker-compose.yml'
+  pull_request:
+    paths-ignore:
+      - '**.gitignore'
+      - 'CODEOWNERS'
+      - 'LICENSE.txt'
+      - '**.md'
+      - '**.adoc'
+      - '**.txt'
+      - '.all-contributorsrc'
+      - 'localdeployment/docker-compose.yml'
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'turing85/spring-file-upload' }}
+
+permissions:
+  actions: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  recreate-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Publish Report
+        uses: turing85/publish-report@v1.0.9
+        with:
+          checkout: 'true'
+          recreate-comment: true
+
+  populate-cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Populate cache
+        uses: ./.github/actions/populate-cache
+
+  build:
+    runs-on: ubuntu-latest
+
+    needs:
+      - recreate-comment
+      - populate-cache
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build
+        run: |
+          ./mvnw \
+            --batch-mode \
+            --color always \
+            --define ci \
+            clean package
+
+      - name: Upload Maven State
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: maven-state
+          path: '**/target/maven-*'
+          retention-days: 2
+
+      - name: Upload Compiled Classes
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: compiled-classes
+          path: '**/target/*classes'
+          retention-days: 2
+
+      - name: Upload JARs
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: jars
+          path: '**/target/*.jar'
+          retention-days: 2
+
+  owasp:
+    name: OWASP Scan
+    runs-on: ubuntu-latest
+
+    needs:
+      - recreate-comment
+      - build
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: OWASP Scan
+        uses: ./.github/actions/owasp
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    needs:
+      - build
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Integration Test
+        uses: ./.github/actions/integration-test

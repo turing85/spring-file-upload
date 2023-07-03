@@ -23,7 +23,7 @@ In another terminal, run the tests.
 .Run the tests
 [source bash]
 ----
-./mvnw verify
+$ ./mvnw verify
 ----
 
 == Contributors ✨
