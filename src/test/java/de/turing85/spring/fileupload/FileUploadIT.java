@@ -11,5 +11,5 @@ import org.springframework.test.context.ContextConfiguration;
 @CucumberContextConfiguration
 @ContextConfiguration(classes = FileUploadApplication.class)
 @SpringBootTest
-public class FileUploadIT {
+class FileUploadIT {
 }
