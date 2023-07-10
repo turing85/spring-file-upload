@@ -72,7 +72,7 @@ runs:
               --batch-mode \
               --color always \
               --define ci \
-              failsafe:integration-test failsafe:verify \
+              failsafe:integration-test@e2e-test failsafe:verify@e2e-test \
               || return_code="${?}"
 
             echo "Stopping Application"

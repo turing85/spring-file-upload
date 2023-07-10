@@ -33,6 +33,7 @@
 		<maven.compiler.release>17</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<run-e2e-test>false</run-e2e-test>
 
 		<!-- Dependency versions -->
 		<lombok.version>1.18.28</lombok.version>
@@ -52,17 +53,32 @@
 				<version>${surefire-plugin.version}</version>
 				<executions>
 					<execution>
+						<id>e2e-test</id>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
-						<phase>verify</phase>
+						<phase>none</phase>
+						<configuration>
+							<argLine>-Dspring.profiles.active=e2e</argLine>
+							<includes>
+								<include>**/*CucumberTest.java</include>
+							</includes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<configuration>
+							<argLine>-Dspring.profiles.active=test</argLine>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>

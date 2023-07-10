@@ -10,6 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 @SelectClasspathResource("de/turing85/spring/fileupload")
 @CucumberContextConfiguration
 @ContextConfiguration(classes = FileUploadApplication.class)
-@SpringBootTest
-class FileUploadIT {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class FileUploadCucumberTest {
 }

@@ -8,19 +8,14 @@ import java.util.Random;
 
 import com.google.common.truth.Truth;
 import de.turing85.spring.fileupload.UploadResource;
-import io.cucumber.spring.ScenarioScope;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
-@Component
-@ScenarioScope
 public class FileUploadActor {
   private static final Random RANDOM = new Random();
   private static final int EXPECTED_SIZE_NOT_SET = -1;
@@ -32,7 +27,7 @@ public class FileUploadActor {
   private CloseableHttpClient client;
   private CloseableHttpResponse response;
 
-  public FileUploadActor(@Value("${sut.url}") URI sutUrl) {
+  public FileUploadActor(URI sutUrl) {
     this.sutUrl = sutUrl;
   }
 
