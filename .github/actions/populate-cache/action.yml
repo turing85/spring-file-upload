@@ -22,5 +22,5 @@ runs:
         ./mvnw \
           --batch-mode \
           --color always \
-          --define ci \
-          package
+          --define ci-populate-cache \
+          dependency:go-offline verify
