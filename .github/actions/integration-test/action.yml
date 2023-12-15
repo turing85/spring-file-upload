@@ -15,17 +15,17 @@ runs:
         cache: 'maven'
 
     - name: Download Maven State
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: maven-state
 
     - name: Download Compiled Classes
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: compiled-classes
 
     - name: Download JARs
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: jars
 
@@ -86,7 +86,7 @@ runs:
         exit "${return_code}"
 
     - name: Upload Integration Test Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: int-test-report
@@ -95,7 +95,7 @@ runs:
         retention-days: 2
 
     - name: Upload Integration Test App Logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: int-test-app-logs
@@ -105,7 +105,7 @@ runs:
 
     - name: Publish Report
       if: ${{ always() }}
-      uses: turing85/publish-report@v1.0.3
+      uses: turing85/publish-report@v1.0.11
       with:
         report-name: Integration Test
         report-path: '**/target/cucumber-reports/cucumber.xml'
