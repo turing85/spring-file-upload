@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Publish Report
-        uses: turing85/publish-report@v1.0.11
+        uses: turing85/publish-report@v2
         with:
           checkout: 'true'
           recreate-comment: true
@@ -124,7 +124,7 @@ jobs:
 
       - name: Publish Report
         if: ${{ always() }}
-        uses: turing85/publish-report@v1.0.11
+        uses: turing85/publish-report@v2
         with:
           report-name: Unit Test
           report-path: '**/target/surefire-reports/*.xml'
