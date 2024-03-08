@@ -56,6 +56,8 @@ jobs:
 
       - name: Populate cache
         uses: ./.github/actions/populate-cache
+        with:
+          nvd-api-key: ${{ secrets.NVD_API_KEY }}
 
   build-and-test:
     name: Build and Test
@@ -140,6 +142,8 @@ jobs:
 
       - name: OWASP Scan
         uses: ./.github/actions/owasp
+        with:
+          nvd-api-key: ${{ secrets.NVD_API_KEY }}
 
   integration-tests:
     name: Integration Tests
