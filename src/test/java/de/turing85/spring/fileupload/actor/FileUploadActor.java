@@ -17,13 +17,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpStatus;
 
 public class FileUploadActor {
-  private static final Random RANDOM = new Random();
-  private static final int EXPECTED_SIZE_NOT_SET = -1;
-  private static final int SIZE_IS_SET_BUT_IRRELEVANT = -2;
-
+  private final Random random = new Random();
   private final URI sutUrl;
 
-  private int expectedSize = EXPECTED_SIZE_NOT_SET;
+  private Integer expectedSize = null;
+  private boolean validateSize = true;
   private CloseableHttpClient client;
   private CloseableHttpResponse response;
 
@@ -49,7 +47,7 @@ public class FileUploadActor {
   }
 
   private void validateStateIsClean() {
-    if (expectedSize != EXPECTED_SIZE_NOT_SET) {
+    if (Objects.nonNull(expectedSize)) {
       throw new IllegalStateException("expectedSize must not be set");
     }
     if (Objects.nonNull(client)) {
@@ -64,9 +62,9 @@ public class FileUploadActor {
     return new HttpPost(sutUrl.resolve(UploadResource.PATH));
   }
 
-  private static byte[] createRandomBytes(int size) {
+  private byte[] createRandomBytes(int size) {
     byte[] randomBytes = new byte[size];
-    RANDOM.nextBytes(randomBytes);
+    random.nextBytes(randomBytes);
     return randomBytes;
   }
 
@@ -83,8 +81,8 @@ public class FileUploadActor {
   }
 
   private void validateStateIsSet() {
-    if (expectedSize == EXPECTED_SIZE_NOT_SET) {
-      throw new IllegalStateException("expectedSize must be set");
+    if (validateSize && Objects.isNull(expectedSize)) {
+      throw new IllegalStateException("if validateSize is true, then expectedSize must be set");
     }
     if (Objects.isNull(client)) {
       throw new IllegalStateException("client must not be null");
@@ -99,12 +97,14 @@ public class FileUploadActor {
     response = null;
     client.close();
     client = null;
-    expectedSize = EXPECTED_SIZE_NOT_SET;
+    expectedSize = null;
+    validateSize = true;
   }
 
   public void uploadNoFile() throws IOException {
     validateStateIsClean();
-    expectedSize = SIZE_IS_SET_BUT_IRRELEVANT;
+    expectedSize = null;
+    validateSize = false;
     HttpPost post = constructPostRequest();
     post.setEntity(MultipartEntityBuilder.create().build());
     client = HttpClients.createDefault();
