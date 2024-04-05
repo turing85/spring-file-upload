@@ -56,8 +56,6 @@ jobs:
 
       - name: Populate cache
         uses: ./.github/actions/populate-cache
-        with:
-          nvd-api-key: ${{ secrets.NVD_API_KEY }}
 
   build-and-test:
     name: Build and Test
