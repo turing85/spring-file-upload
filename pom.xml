@@ -14,7 +14,7 @@
 		<clean-plugin.version>3.3.2</clean-plugin.version>
 		<compiler-plugin.version>3.13.0</compiler-plugin.version>
 		<dependency-check-maven.version>9.2.0</dependency-check-maven.version>
-		<formatter-maven-plugin.version>2.23.0</formatter-maven-plugin.version>
+		<formatter-maven-plugin.version>2.24.0</formatter-maven-plugin.version>
 		<impsort-maven-plugin.version>1.10.0</impsort-maven-plugin.version>
 		<install-plugin.version>3.1.2</install-plugin.version>
 		<jar-plugin.version>3.4.1</jar-plugin.version>
