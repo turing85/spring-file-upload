@@ -11,7 +11,7 @@
 
 	<properties>
 		<!-- Plugin versions -->
-		<clean-plugin.version>3.3.2</clean-plugin.version>
+		<clean-plugin.version>3.4.0</clean-plugin.version>
 		<compiler-plugin.version>3.13.0</compiler-plugin.version>
 		<dependency-check-maven.version>9.2.0</dependency-check-maven.version>
 		<formatter-maven-plugin.version>2.24.1</formatter-maven-plugin.version>
