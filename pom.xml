@@ -19,7 +19,7 @@
 		<install-plugin.version>3.1.4</install-plugin.version>
 		<jar-plugin.version>3.4.2</jar-plugin.version>
 		<resources-plugin.version>3.3.1</resources-plugin.version>
-		<surefire-plugin.version>3.5.2</surefire-plugin.version>
+		<surefire-plugin.version>3.5.3</surefire-plugin.version>
 
 		<!-- Project setup -->
 		<dependency-check-maven.skip>true</dependency-check-maven.skip>
