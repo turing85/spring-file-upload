@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class FileUploadSteps {
   private final FileUploadActor actor;
 
