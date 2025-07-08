@@ -40,7 +40,7 @@
 
 		<!-- Test Dependency versions -->
 		<apache-http.version>4.5.14</apache-http.version>
-		<cucumber.version>7.12.1</cucumber.version>
+		<cucumber.version>7.24.0</cucumber.version>
 		<junit.version>5.13.3</junit.version>
 		<truth.version>1.4.4</truth.version>
 	</properties>
@@ -185,14 +185,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
 			<!-- Test dependencies -->
 			<dependency>
 				<groupId>org.junit</groupId>
@@ -204,7 +196,16 @@
 			<dependency>
 				<groupId>io.cucumber</groupId>
 				<artifactId>cucumber-bom</artifactId>
-				<version>7.24.0</version>
+				<version>${cucumber.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Spring-boot dependencies -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
