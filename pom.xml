@@ -35,7 +35,7 @@
 		<run-e2e-test>false</run-e2e-test>
 
 		<!-- Dependency versions -->
-		<lombok.version>1.18.40</lombok.version>
+		<lombok.version>1.18.42</lombok.version>
 		<spring-boot.version>3.5.5</spring-boot.version>
 
 		<!-- Test Dependency versions -->
