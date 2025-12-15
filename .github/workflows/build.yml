@@ -85,7 +85,7 @@ jobs:
             clean package
 
       - name: Upload Maven State
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -94,7 +94,7 @@ jobs:
           retention-days: 2
 
       - name: Upload Compiled Classes
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -103,7 +103,7 @@ jobs:
           retention-days: 2
 
       - name: Upload JARs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -112,7 +112,7 @@ jobs:
           retention-days: 2
 
       - name: Upload Unit Test Report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: unit-test-report
