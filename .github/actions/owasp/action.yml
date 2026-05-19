@@ -24,6 +24,7 @@ runs:
         cache: 'maven'
 
     - name: OWASP DB Cache
+      id: download-owasp-db-cache
       uses: actions/cache@v5
       with:
         path: owasp-db
@@ -57,6 +58,13 @@ runs:
           --define dataDirectory=owasp-db \
           --define nvdApiKey=${{ inputs.nvd-api-key }} \
           package
+
+    - name: Upload OWASP DB Cache
+      if: ${{ (failure() || success()) && steps.download-owasp-db-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v5
+      with:
+        key: owasp-db
+        path: owasp-db
 
     - name: Upload OWASP Scan Report
       uses: actions/upload-artifact@v7
