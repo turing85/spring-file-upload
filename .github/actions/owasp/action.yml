@@ -24,25 +24,25 @@ runs:
         cache: 'maven'
 
     - name: OWASP DB Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: owasp-db
         key: owasp-db
 
     - name: Download Maven State
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       if: ${{ inputs.download-artifacts == 'true' }}
       with:
         name: maven-state
 
     - name: Download Compiled Classes
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       if: ${{ inputs.download-artifacts == 'true' }}
       with:
         name: compiled-classes
 
     - name: Download JARs
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       if: ${{ inputs.download-artifacts == 'true' }}
       with:
         name: jars
@@ -59,7 +59,7 @@ runs:
           package
 
     - name: Upload OWASP Scan Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: ${{ always() }}
       with:
         if-no-files-found: error
@@ -69,7 +69,7 @@ runs:
 
     - name: Publish Report
       if: ${{ always() }}
-      uses: turing85/publish-report@v2
+      uses: turing85/publish-report@v3
       with:
         report-list-tests: failed
         report-name: OWASP Scan
